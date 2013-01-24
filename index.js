@@ -1,5 +1,4 @@
 var createGame = require('voxel-engine')
-var THREE = require('three')
 var voxel = require('voxel')
 var toolbar = require('toolbar')
 var skin = require('minecraft-skin')

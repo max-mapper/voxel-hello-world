@@ -5,14 +5,13 @@
     "type":"git",
     "url": "git@github.com:maxogden/voxel-hello-world.git"
   },
-  "dependencies": {
+  "devDependencies": {
     "voxel-engine": "0.3.5",
     "minecraft-skin": "0.0.1",
     "painterly-textures": "git://github.com/maxogden/painterly-textures.git#relative",
-    "voxel-debris": "0.0.4"
-  },
-  "devDependencies": {
-    "browservefy": "0.0.1"
+    "voxel-debris": "0.0.4",
+    "browservefy": "0.0.1",
+    "toolbar": "0.0.2"
   },
   "scripts": {
     "start": "echo \"open localhost:8080/\" && ./node_modules/.bin/browservefy index.js 8080 -- -d"
