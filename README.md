@@ -2,6 +2,14 @@
 
 Learn more at http://voxeljs.com
 
+# Using it as a module
+
+`npm install voxel-hello-world`
+
+```javascript
+var game = require('voxel-hello-world')
+```
+
 # Get it running on your machine
 
 The first time you set up, you should install the required npm packages:
