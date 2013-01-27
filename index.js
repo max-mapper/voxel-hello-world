@@ -62,3 +62,5 @@ window.addEventListener('keydown', function (ev) {
 function ctrlToggle (ev) { erase = !ev.ctrlKey }
 window.addEventListener('keyup', ctrlToggle)
 window.addEventListener('keydown', ctrlToggle)
+
+module.exports = game
