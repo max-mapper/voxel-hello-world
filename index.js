@@ -3,13 +3,11 @@ var voxel = require('voxel')
 var toolbar = require('toolbar')
 var skin = require('minecraft-skin')
 var debris = require('voxel-debris')
-var texturePath = require('painterly-textures')(__dirname)
 var blockSelector = toolbar({el: '#tools'})
 
 var game = createGame({
   generate: voxel.generator['Valley'],
-  startingPosition: [185, 100, 0],
-  texturePath: texturePath
+  startingPosition: [185, 100, 0]
 })
 
 window.game = game // for debugging
