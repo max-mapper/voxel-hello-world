@@ -5,6 +5,7 @@ var skin = require('minecraft-skin')
 var debris = require('voxel-debris')
 var texturePath = require('painterly-textures')(__dirname)
 var blockSelector = toolbar({el: '#tools'})
+var highlight = require('voxel-highlight')
 
 var game = createGame({
   generate: voxel.generator['Valley'],
@@ -34,6 +35,12 @@ substack.position.set(0, 62, -20)
 game.scene.add(substack)
 
 var currentMaterial = 1
+
+highlight(game, {
+    distance: 100,
+    wireframeLinewidth: 10,
+    wireframeOpacity: .9
+})
 
 blockSelector.on('select', function(material) {
   var idx = game.materials.indexOf(material)
