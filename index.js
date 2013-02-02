@@ -5,7 +5,7 @@ var skin = require('minecraft-skin')
 var debris = require('voxel-debris')
 var texturePath = require('painterly-textures')(__dirname)
 var blockSelector = toolbar({el: '#tools'})
-var highlight = require('voxel-highlight')
+var highlighter = require('voxel-highlight')
 
 var game = createGame({
   generate: voxel.generator['Valley'],
@@ -36,10 +36,20 @@ game.scene.add(substack)
 
 var currentMaterial = 1
 
-highlight(game, {
-    distance: 100,
-    wireframeLinewidth: 10,
-    wireframeOpacity: .9
+var highlight = highlighter(game, {
+  distance: 100,
+  wireframeLinewidth: 10,
+  wireframeOpacity: .9
+})
+
+var highlightedPosition = undefined
+
+highlight.on('highlight', function(position, mesh) {
+  highlightedPosition = position
+})
+
+highlight.on('remove', function(mesh) {
+  highlightedPosition = undefined
 })
 
 blockSelector.on('select', function(material) {
@@ -55,8 +65,10 @@ blockSelector.on('select', function(material) {
 var explode = debris(game, { power : 1.5, yield: 1 })
 
 game.on('mousedown', function (pos) {
-  if (erase) explode(pos)
-  else game.createBlock(pos, currentMaterial)
+  if (highlightedPosition) {
+    if (erase) explode(pos)
+    else game.createBlock(pos, currentMaterial)
+  }
 })
 
 var erase = true
