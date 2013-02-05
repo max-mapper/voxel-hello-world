@@ -19,13 +19,6 @@ var container = document.querySelector('#container')
 
 game.appendTo(container)
 
-container.addEventListener('click', function() {
-  game.requestPointerLock(container)
-})
-
-// rotate camera left so it points at the characters
-game.controls.yawObject.rotation.y = 1.5
-
 var maxogden = skin(game.THREE, 'maxogden.png').createPlayerObject()
 maxogden.position.set(0, 62, 20)
 game.scene.add(maxogden)
@@ -62,7 +55,23 @@ blockSelector.on('select', function(material) {
   if (idx > -1) currentMaterial = idx + 1
 })
 
-var explode = debris(game, { power : 1.5, yield: 1 })
+var explode = debris(game, { power : 1.5, yield: 0 })
+
+game.on('fire', function(mount, state) {
+  var vec = mount.worldVector()
+    , pos = mount.worldPosition()
+    , point = game.raycast(pos, vec, 100)
+
+  if(!point) {
+    return
+  }
+
+  if(!state.firealt && !state.alt) {
+    explode(point)  
+  } else {
+    game.createBlock(point.addSelf(vec.multiplyScalar(-game.cubeSize/2)), 1)
+  }
+})
 
 game.on('mousedown', function (pos) {
   if (highlightedPosition) {
