@@ -19,20 +19,31 @@ var container = document.querySelector('#container')
 
 game.appendTo(container)
 
-container.addEventListener('click', function() {
-  game.requestPointerLock(container)
-})
-
-// rotate camera left so it points at the characters
-game.controls.yawObject.rotation.y = 1.5
-
 var maxogden = skin(game.THREE, 'maxogden.png').createPlayerObject()
+var maxPhysics = game.makePhysical(maxogden)
 maxogden.position.set(0, 62, 20)
 game.scene.add(maxogden)
+game.addItem(maxPhysics)
+
+maxPhysics.yaw = maxogden
+maxPhysics.pitch = maxogden.head
+maxPhysics.subjectTo(new game.THREE.Vector3(0, -0.00009, 0))
 
 var substack = skin(game.THREE, 'substack.png').createPlayerObject()
+var substackPhysics = game.makePhysical(substack)
+
 substack.position.set(0, 62, -20)
 game.scene.add(substack)
+game.addItem(substackPhysics)
+
+substackPhysics.yaw = substack
+substackPhysics.pitch = substack.head
+substackPhysics.subjectTo(new game.THREE.Vector3(0, -0.00009, 0))
+substackPhysics.blocksCreation = true
+
+game.control(substackPhysics)
+mountPoint = substack.cameraInside
+mountPoint.add(game.camera)
 
 var currentMaterial = 1
 
@@ -62,19 +73,30 @@ blockSelector.on('select', function(material) {
   if (idx > -1) currentMaterial = idx + 1
 })
 
-var explode = debris(game, { power : 1.5, yield: 1 })
+var explode = debris(game, { power : 1.5, yield: 0 })
+var mountPoint
 
-game.on('mousedown', function (pos) {
-  if (highlightedPosition) {
-    if (erase) explode(pos)
-    else game.createBlock(pos, currentMaterial)
+game.on('fire', function(target, state) {
+  var vec = game.cameraVector()
+  var pos = game.cameraPosition()
+  var point = game.raycast(pos, vec, 100)
+
+  if(!point) {
+    return
+  }
+
+  if(!state.firealt && !state.alt) {
+    explode(point)  
+  } else {
+    game.createBlock(point.addSelf(vec.multiplyScalar(-game.cubeSize/2)), 1)
   }
 })
 
-var erase = true
 window.addEventListener('keydown', function (ev) {
-  if (ev.keyCode === 'X'.charCodeAt(0)) {
-    erase = !erase
+  if(ev.keyCode === 'R'.charCodeAt(0) && game.controlling === substackPhysics) {
+    mountPoint = (mountPoint === substack.cameraInside ?
+      substack.cameraOutside : substack.cameraInside)    
+    mountPoint.add(game.camera)
   }
 })
 
