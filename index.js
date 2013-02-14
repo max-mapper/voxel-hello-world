@@ -43,7 +43,7 @@ substackPhysics.blocksCreation = true
 
 game.control(substackPhysics)
 mountPoint = substack.cameraInside
-mountPoint.add(game.camera)
+mountPoint.add(game.view.camera)
 
 var currentMaterial = 1
 
@@ -96,7 +96,7 @@ window.addEventListener('keydown', function (ev) {
   if(ev.keyCode === 'R'.charCodeAt(0) && game.controlling === substackPhysics) {
     mountPoint = (mountPoint === substack.cameraInside ?
       substack.cameraOutside : substack.cameraInside)    
-    mountPoint.add(game.camera)
+    mountPoint.add(game.view.camera)
   }
 })
 
