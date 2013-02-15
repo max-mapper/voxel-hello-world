@@ -6,7 +6,7 @@
     "url": "git@github.com:maxogden/voxel-hello-world.git"
   },
   "devDependencies": {
-    "voxel-engine": "0.4.3",
+    "voxel-engine": "0.5.8",
     "voxel-highlight": "0.0.1",
     "voxel": "0.1.3",
     "minecraft-skin": "0.0.3",
