@@ -1,16 +1,27 @@
 var createGame = require('voxel-engine')
 var voxel = require('voxel')
 var toolbar = require('toolbar')
-var skin = require('minecraft-skin')
-var debris = require('voxel-debris')
+var player = require('voxel-player')
+var createTerrain = require('voxel-perlin-terrain')
+var highlighter = require('voxel-highlight')
+var createTree = require('voxel-forest')
 var texturePath = require('painterly-textures')(__dirname)
 var blockSelector = toolbar({el: '#tools'})
-var highlighter = require('voxel-highlight')
 
+// setup the game and add some trees
 var game = createGame({
-  generate: voxel.generator['Valley'],
-  startingPosition: [185, 100, 0],
-  texturePath: texturePath
+  generateVoxelChunk: createTerrain({ scaleFactor: 10 }),
+  chunkDistance: 2,
+  materials: [
+    'obsidian',
+    ['grass', 'dirt', 'grass_dirt'],
+    'brick',
+    'grass',
+    'plank'
+  ],
+  texturePath: texturePath,
+  worldOrigin: [0, 0, 0],
+  controls: { discreteFire: true }
 })
 
 window.game = game // for debugging
@@ -19,89 +30,41 @@ var container = document.querySelector('#container')
 
 game.appendTo(container)
 
-var maxogden = skin(game.THREE, 'maxogden.png').createPlayerObject()
-var maxPhysics = game.makePhysical(maxogden)
-maxogden.position.set(0, 62, 20)
-game.scene.add(maxogden)
-game.addItem(maxPhysics)
+for (var i = 0; i < 20; i++) createTree(game, { bark: 5, leaves: 4 })
 
-maxPhysics.yaw = maxogden
-maxPhysics.pitch = maxogden.head
-maxPhysics.subjectTo(new game.THREE.Vector3(0, -0.00009, 0))
+// create the player from a minecraft skin file and tell the
+// game to use it as the main player
+var createPlayer = player(game)
+var substack = createPlayer('substack.png')
+substack.yaw.position.set(0, -1200, 0)
+substack.possess()
 
-var substack = skin(game.THREE, 'substack.png').createPlayerObject()
-var substackPhysics = game.makePhysical(substack)
+// toggle between first and third person modes
+window.addEventListener('keydown', function (ev) {
+  if (ev.keyCode === 'R'.charCodeAt(0)) substack.toggle()
+})
 
-substack.position.set(0, 62, -20)
-game.scene.add(substack)
-game.addItem(substackPhysics)
-
-substackPhysics.yaw = substack
-substackPhysics.pitch = substack.head
-substackPhysics.subjectTo(new game.THREE.Vector3(0, -0.00009, 0))
-substackPhysics.blocksCreation = true
-
-game.control(substackPhysics)
-mountPoint = substack.cameraInside
-mountPoint.add(game.camera)
-
+// block interaction stuff
+var highlight = highlighter(game)
 var currentMaterial = 1
 
-var highlight = highlighter(game, {
-  distance: 100,
-  wireframeLinewidth: 10,
-  wireframeOpacity: .9
-})
-
-var highlightedPosition = undefined
-
-highlight.on('highlight', function(position, mesh) {
-  highlightedPosition = position
-})
-
-highlight.on('remove', function(mesh) {
-  highlightedPosition = undefined
-})
-
 blockSelector.on('select', function(material) {
-  var idx = game.materials.indexOf(material)
-  if (idx === -1) {
-    for (var m = 0; m < game.materials.length; m++) {
-      if (typeof game.materials[m] === 'object' && game.materials[m][0] === material) idx = m
-    }
-  }
-  if (idx > -1) currentMaterial = idx + 1
+  material = +material // cast to int
+  if (material > -1) currentMaterial = material
+  else currentMaterial = 1
 })
-
-var explode = debris(game, { power : 1.5, yield: 0 })
-var mountPoint
 
 game.on('fire', function(target, state) {
   var vec = game.cameraVector()
   var pos = game.cameraPosition()
   var point = game.raycast(pos, vec, 100)
-
-  if(!point) {
-    return
-  }
-
-  if(!state.firealt && !state.alt) {
-    explode(point)  
+  if (!point) return
+  var erase = !state.firealt && !state.alt
+  if (erase) {
+    game.setBlock(point, 0)
   } else {
-    game.createBlock(point.addSelf(vec.multiplyScalar(-game.cubeSize/2)), 1)
+    game.createBlock(point.addSelf(vec.multiplyScalar(-game.cubeSize/2)), currentMaterial)
   }
 })
-
-window.addEventListener('keydown', function (ev) {
-  if(ev.keyCode === 'R'.charCodeAt(0) && game.controlling === substackPhysics) {
-    mountPoint = (mountPoint === substack.cameraInside ?
-      substack.cameraOutside : substack.cameraInside)    
-    mountPoint.add(game.camera)
-  }
-})
-
-function ctrlToggle (ev) { erase = !ev.ctrlKey }
-window.addEventListener('keyup', ctrlToggle)
-window.addEventListener('keydown', ctrlToggle)
 
 module.exports = game
