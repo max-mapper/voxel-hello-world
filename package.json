@@ -1,4 +1,4 @@
-{
+jk{
   "name": "voxel-hello-world",
   "version": "0.0.2",
   "repository": {
@@ -14,7 +14,7 @@
     "voxel-forest": "0.0.0",
     "voxel-perlin-terrain": "0.0.5",
     "browservefy": "0.0.1",
-    "toolbar": "0.0.2"
+    "toolbar": "0.0.5"
   },
   "scripts": {
     "start": "echo \"open localhost:8080/\" && ./node_modules/.bin/browservefy index.js 8080 -- -d"
