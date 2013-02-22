@@ -36,8 +36,12 @@ for (var i = 0; i < 20; i++) createTree(game, { bark: 5, leaves: 4 })
 // game to use it as the main player
 var createPlayer = player(game)
 var substack = createPlayer('substack.png')
-substack.yaw.position.set(0, -1200, 0)
 substack.possess()
+
+// fixes a dumb race condition somewhere
+setTimeout(function() {
+  substack.yaw.position.set(0, 10, 0)  
+}, 1000)
 
 // toggle between first and third person modes
 window.addEventListener('keydown', function (ev) {
