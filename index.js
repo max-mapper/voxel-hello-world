@@ -40,7 +40,7 @@ substack.possess()
 
 // fixes a dumb race condition somewhere
 setTimeout(function() {
-  substack.yaw.position.set(0, 10, 0)  
+  substack.yaw.position.set(0, 50, 0)
 }, 1000)
 
 // toggle between first and third person modes
