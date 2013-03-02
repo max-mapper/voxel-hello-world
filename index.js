@@ -2,13 +2,17 @@ var createGame = require('voxel-engine')
 var voxel = require('voxel')
 var toolbar = require('toolbar')
 var player = require('voxel-player')
-var highlighter = require('voxel-highlight')
 var texturePath = require('painterly-textures')(__dirname)
 var blockSelector = toolbar({el: '#tools'})
 
+function makeSphereWorld(x, y, z) {
+  if ((x*x + y*y + z*z) > 200) return 0
+  return 2
+}
+
 // setup the game and add some trees
 var game = createGame({
-  generate: function(x, y, z) { if ((x*x + y*y + z*z) > 50) return 0; return 2 },
+  generate: makeSphereWorld,
   chunkDistance: 2,
   materials: [
     'obsidian',
@@ -33,11 +37,7 @@ game.appendTo(container)
 var createPlayer = player(game)
 var substack = createPlayer('substack.png')
 substack.possess()
-
-// fixes a dumb race condition somewhere
-setTimeout(function() {
-  substack.yaw.position.set(0, 52, 0)
-}, 1000)
+substack.yaw.position.set(2, 14, 4)
 
 // toggle between first and third person modes
 window.addEventListener('keydown', function (ev) {
@@ -45,7 +45,6 @@ window.addEventListener('keydown', function (ev) {
 })
 
 // block interaction stuff
-var highlight = highlighter(game)
 var currentMaterial = 1
 
 blockSelector.on('select', function(material) {
@@ -55,16 +54,12 @@ blockSelector.on('select', function(material) {
 })
 
 game.on('fire', function(target, state) {
-  var vec = game.cameraVector()
-  var pos = game.cameraPosition()
-  var point = game.raycast(pos, vec, 100)
+  var point = game.raycast()
   if (!point) return
   var erase = !state.firealt && !state.alt
   if (erase) {
-    game.setBlock(point, 0)
+    game.setBlock(point.position, 0)
   } else {
-    game.createBlock(point.addSelf(vec.multiplyScalar(-game.cubeSize/2)), currentMaterial)
+    game.createAdjacent(point, currentMaterial)
   }
 })
-
-module.exports = game

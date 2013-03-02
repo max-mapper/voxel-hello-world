@@ -17,10 +17,9 @@ The first time you set up, you should install the required npm packages:
 ```
 cd voxel-hello-world
 npm install
-npm install browserify -g
 ```
 
-Then run the start script (which you'll need to do every time you want to run the demo):
+Then run the start script:
 
 ```
 npm start
