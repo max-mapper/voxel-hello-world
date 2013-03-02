@@ -64,6 +64,6 @@ game.on('fire', function(target, state) {
   if (erase) {
     game.setBlock(point.position, 0)
   } else {
-    game.createAdjacent(point, currentMaterial)
+    game.createBlock(point.adjacent, currentMaterial)
   }
 })
