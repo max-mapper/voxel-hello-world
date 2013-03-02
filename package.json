@@ -1,6 +1,6 @@
 {
   "name": "voxel-hello-world",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "repository": {
     "type":"git",
     "url": "git@github.com:maxogden/voxel-hello-world.git"
@@ -8,7 +8,6 @@
   "devDependencies": {
     "voxel-engine": "0.9.0",
     "voxel-highlight": "0.0.4",
-    "voxel": "0.1.5",
     "voxel-player": "0.1.0",
     "painterly-textures": "0.0.3",
     "voxel-forest": "0.0.0",

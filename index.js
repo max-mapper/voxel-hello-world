@@ -1,5 +1,4 @@
 var createGame = require('voxel-engine')
-var voxel = require('voxel')
 var toolbar = require('toolbar')
 var player = require('voxel-player')
 var texturePath = require('painterly-textures')(__dirname)
