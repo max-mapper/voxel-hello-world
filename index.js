@@ -1,10 +1,9 @@
 var createGame = require('voxel-engine')
-var voxel = require('voxel')
-var toolbar = require('toolbar')
+var highlight = require('voxel-highlight')
 var player = require('voxel-player')
 var texturePath = require('painterly-textures')(__dirname)
+var toolbar = require('toolbar')
 var blockSelector = toolbar({el: '#tools'})
-var highlight = require('voxel-highlight')
 
 function makeSphereWorld(x, y, z) {
   if ((x*x + y*y + z*z) > 200) return 0
@@ -41,7 +40,8 @@ substack.possess()
 substack.yaw.position.set(2, 14, 4)
 
 // highlight blocks when you look at them
-var highlighter = highlight(game)
+var highlighter = highlight(game, { color: 0xff0000 })
+highlighter.on('highlight', function (voxelPosition) { console.log("highlight: " + voxelPosition) })
 
 // toggle between first and third person modes
 window.addEventListener('keydown', function (ev) {
