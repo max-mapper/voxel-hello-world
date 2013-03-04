@@ -42,7 +42,7 @@ substack.yaw.position.set(2, 14, 4)
 
 // highlight blocks when you look at them
 var highlighter = highlight(game, { color: 0xff0000 })
-highlighter.on('highlight', function (voxelPosition) { console.log("highlight: " + voxelPosition) })
+highlighter.on('highlight', function (mesh, voxelPosition) { console.log("highlight: " + voxelPosition) })
 
 // toggle between first and third person modes
 window.addEventListener('keydown', function (ev) {
