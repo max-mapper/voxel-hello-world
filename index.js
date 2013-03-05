@@ -6,19 +6,15 @@ var player = require('voxel-player')
 var texturePath = require('painterly-textures')(__dirname)
 var toolbar = require('toolbar')
 var blockSelector = toolbar({el: '#tools'})
-
-function makeSphereWorld(x, y, z) {
-  if ((x*x + y*y + z*z) > 200) return 0
-  return 2
-}
+var voxel = require('voxel')
 
 // setup the game and add some trees
 var game = createGame({
-  generate: makeSphereWorld,
+  generate: voxel.generator['Valley'],
   chunkDistance: 2,
   materials: [
-    'obsidian',
     ['grass', 'dirt', 'grass_dirt'],
+    'obsidian',
     'brick',
     'grass',
     'plank'
