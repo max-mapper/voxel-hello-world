@@ -43,7 +43,15 @@ module.exports = function(opts) {
   substack.yaw.position.set(2, 14, 4)
 
   // highlight blocks when you look at them
-  var highlighter = highlight(game)
+  var highlighter = highlight(game, {
+    color: 0xff0000,
+    distance: 100,
+    frequency: 20 // very frequent for "painting" mode
+  })
+  highlighter.on('highlight', function (voxelPos) {
+    console.log("highlighted voxel: " + voxelPos)
+    game.setBlock(voxelPos, currentMaterial) // paint mode
+  })
 
   // toggle between first and third person modes
   window.addEventListener('keydown', function (ev) {
