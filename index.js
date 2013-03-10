@@ -25,7 +25,7 @@ module.exports = function(opts) {
     controls: { discreteFire: true }
   }
   opts = extend({}, defaults, opts || {})
-  
+
   // setup the game and add some trees
   var game = createGame(opts)
 
@@ -43,22 +43,22 @@ module.exports = function(opts) {
   substack.yaw.position.set(2, 14, 4)
 
   // highlight blocks when you look at them
-  var highlighter = highlight(game, {
-    color: 0xff0000,
-    distance: 100,
-    frequency: 20 // very frequent for "painting" mode
+  var blockPosPlace, blockPosErase
+  var hl = game.highlighter = highlight(game, {
+    color: 0x00ff00,
+    distance: 100
   })
-  highlighter.on('highlight', function (voxelPos) {
-    console.log("highlighted voxel: " + voxelPos)
-    game.setBlock(voxelPos, currentMaterial) // paint mode
-  })
+  hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
+  hl.on('remove', function (voxelPos) { blockPosErase = null })
+  hl.on('highlight-adjacent', function (voxelPos) { blockPosPlace = voxelPos })
+  hl.on('remove-adjacent', function (voxelPos) { blockPosPlace = null })
 
   // toggle between first and third person modes
   window.addEventListener('keydown', function (ev) {
     if (ev.keyCode === 'R'.charCodeAt(0)) substack.toggle()
   })
 
-  // block interaction stuff
+  // block interaction stuff, uses highlight data
   var currentMaterial = 1
 
   blockSelector.on('select', function(material) {
@@ -67,16 +67,10 @@ module.exports = function(opts) {
     else currentMaterial = 1
   })
 
-  game.on('fire', function(target, state) {
-    var point = game.raycast()
-    if (!point) return
-    var erase = !state.firealt && !state.alt
-    if (erase) {
-      game.setBlock(point.position, 0)
-    } else {
-      game.createBlock(point.adjacent, currentMaterial)
-    }
+  game.on('fire', function (target, state) {
+    if (blockPosPlace) game.createBlock(blockPosPlace, currentMaterial)
+    else if (blockPosErase) game.setBlock(blockPosErase, 0)
   })
-  
+
   return game
 }
