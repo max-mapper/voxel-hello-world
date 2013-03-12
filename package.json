@@ -1,6 +1,6 @@
 {
   "name": "voxel-hello-world",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "repository": {
     "type":"git",
     "url": "git@github.com:maxogden/voxel-hello-world.git"
@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "browserify": "1.17.3",
-    "browservefy": "0.0.8"
+    "browservefy": "0.0.9"
   },
   "scripts": {
     "start": "browservefy test.js:bundle.js 8080 -- -d"

@@ -1,11 +1,7 @@
 var createGame = require('voxel-engine')
-var toolbar = require('toolbar')
 var highlight = require('voxel-highlight')
-var toolbar = require('toolbar')
 var player = require('voxel-player')
 var texturePath = require('painterly-textures')(__dirname)
-var toolbar = require('toolbar')
-var blockSelector = toolbar({el: '#tools'})
 var voxel = require('voxel')
 var extend = require('extend')
 
@@ -31,7 +27,7 @@ module.exports = function(opts) {
 
   window.game = game // for debugging
 
-  var container = document.querySelector('#container')
+  var container = opts.container || document.body
 
   game.appendTo(container)
 
@@ -60,12 +56,6 @@ module.exports = function(opts) {
 
   // block interaction stuff, uses highlight data
   var currentMaterial = 1
-
-  blockSelector.on('select', function(material) {
-    material = +material // cast to int
-    if (material > -1) currentMaterial = material
-    else currentMaterial = 1
-  })
 
   game.on('fire', function (target, state) {
     if (blockPosPlace) game.createBlock(blockPosPlace, currentMaterial)
