@@ -26,7 +26,6 @@ module.exports = function(opts) {
   var game = createGame(opts)
 
   window.game = game // for debugging
-
   var container = opts.container || document.body
 
   game.appendTo(container)

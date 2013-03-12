@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "voxel": "0.3.1",
-    "voxel-engine": "0.10.0",
+    "voxel-engine": "0.14.1",
     "voxel-highlight": "0.0.7",
     "voxel-player": "0.1.0",
     "painterly-textures": "0.0.3",
