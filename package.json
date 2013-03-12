@@ -19,6 +19,6 @@
     "browservefy": "0.0.8"
   },
   "scripts": {
-    "start": "echo \"open localhost:8080/\" && ./node_modules/browservefy/bin/browservefy test.js:bundle.js 8080 --browserify=./node_modules/browserify/bin/cmd.js -- -d"
+    "start": "browservefy test.js:bundle.js 8080 -- -d"
   }
 }
