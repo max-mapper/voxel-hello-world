@@ -33,15 +33,16 @@ module.exports = function(opts) {
   // create the player from a minecraft skin file and tell the
   // game to use it as the main player
   var createPlayer = player(game)
-  var substack = createPlayer('substack.png')
+  var substack = createPlayer('player.png')
   substack.possess()
   substack.yaw.position.set(2, 14, 4)
 
-  // highlight blocks when you look at them
+  // highlight blocks when you look at them, hold <Ctrl> for block placement
   var blockPosPlace, blockPosErase
   var hl = game.highlighter = highlight(game, {
     color: 0x00ff00,
-    distance: 100
+    distance: 20,
+    adjacentAnimate: true
   })
   hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
   hl.on('remove', function (voxelPos) { blockPosErase = null })
@@ -57,8 +58,14 @@ module.exports = function(opts) {
   var currentMaterial = 1
 
   game.on('fire', function (target, state) {
-    if (blockPosPlace) game.createBlock(blockPosPlace, currentMaterial)
-    else if (blockPosErase) game.setBlock(blockPosErase, 0)
+    var position = blockPosPlace
+    if (position) {
+      game.createBlock(position, currentMaterial)
+    }
+    else {
+      position = blockPosErase
+      if (position) game.setBlock(position, 0)
+    }
   })
 
   return game
