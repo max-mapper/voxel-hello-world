@@ -33,7 +33,7 @@ module.exports = function(opts) {
   // create the player from a minecraft skin file and tell the
   // game to use it as the main player
   var createPlayer = player(game)
-  var substack = createPlayer('player.png')
+  var substack = createPlayer(opts.playerSkin || 'player.png')
   substack.possess()
   substack.yaw.position.set(2, 14, 4)
 
