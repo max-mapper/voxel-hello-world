@@ -25,12 +25,12 @@ module.exports = function(opts, setup) {
 
   // setup the game and add some trees
   var game = createGame(opts)
+  var container = opts.container || document.body
+  game.appendTo(container)
+  
   var createPlayer = player(game)
 
   window.game = game // for debugging
-  var container = opts.container || document.body
-
-  game.appendTo(container)
 
   // create the player from a minecraft skin file and tell the
   // game to use it as the main player
