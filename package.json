@@ -16,9 +16,9 @@
   },
   "devDependencies": {
     "browserify": "1.17.3",
-    "browservefy": "0.0.9"
+    "beefy": "0.0.11"
   },
   "scripts": {
-    "start": "browservefy test.js:bundle.js 8080 -- -d"
+    "start": "beefy test.js:bundle.js 8080"
   }
 }
