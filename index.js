@@ -55,7 +55,7 @@ function defaultSetup(game, avatar) {
 
   // toggle between first and third person modes
   window.addEventListener('keydown', function (ev) {
-    if (ev.keyCode === 'R'.charCodeAt(0)) substack.toggle()
+    if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle()
   })
 
   // block interaction stuff, uses highlight data
