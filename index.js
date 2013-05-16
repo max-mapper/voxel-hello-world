@@ -1,64 +1,75 @@
 var createGame = require('voxel-engine')
+var highlight = require('voxel-highlight')
+var player = require('voxel-player')
+var texturePath = require('painterly-textures')(__dirname)
 var voxel = require('voxel')
-var toolbar = require('toolbar')
-var skin = require('minecraft-skin')
-var debris = require('voxel-debris')
-var blockSelector = toolbar({el: '#tools'})
+var extend = require('extend')
 
-var game = createGame({
-  generate: voxel.generator['Valley'],
-  startingPosition: [185, 100, 0]
-})
+module.exports = function(opts, setup) {
+  setup = setup || defaultSetup
+  var defaults = {
+    generate: voxel.generator['Valley'],
+    chunkDistance: 2,
+    materials: [
+      ['grass', 'dirt', 'grass_dirt'],
+      'obsidian',
+      'brick',
+      'grass',
+      'plank'
+    ],
+    texturePath: texturePath,
+    worldOrigin: [0, 0, 0],
+    controls: { discreteFire: true }
+  }
+  opts = extend({}, defaults, opts || {})
 
-window.game = game // for debugging
+  // setup the game and add some trees
+  var game = createGame(opts)
+  var container = opts.container || document.body
+  window.game = game // for debugging
+  game.appendTo(container)
+  if (game.notCapable()) return game
+  
+  var createPlayer = player(game)
 
-var container = document.querySelector('#container')
+  // create the player from a minecraft skin file and tell the
+  // game to use it as the main player
+  var avatar = createPlayer(opts.playerSkin || 'player.png')
+  avatar.possess()
+  avatar.yaw.position.set(2, 14, 4)
 
-game.appendTo(container)
+  setup(game, avatar)
+  
+  return game
 
-container.addEventListener('click', function() {
-  game.requestPointerLock(container)
-})
+}
 
-// rotate camera left so it points at the characters
-game.controls.yawObject.rotation.y = 1.5
+function defaultSetup(game, avatar) {
+  // highlight blocks when you look at them, hold <Ctrl> for block placement
+  var blockPosPlace, blockPosErase
+  // var hl = game.highlighter = highlight(game, { color: 0xff0000 })
+  // hl.on('highlight', function (voxelPos) { blockPosErase = voxelPos })
+  // hl.on('remove', function (voxelPos) { blockPosErase = null })
+  // hl.on('highlight-adjacent', function (voxelPos) { blockPosPlace = voxelPos })
+  // hl.on('remove-adjacent', function (voxelPos) { blockPosPlace = null })
 
-var maxogden = skin(game.THREE, 'maxogden.png').createPlayerObject()
-maxogden.position.set(0, 62, 20)
-game.scene.add(maxogden)
+  // toggle between first and third person modes
+  window.addEventListener('keydown', function (ev) {
+    if (ev.keyCode === 'R'.charCodeAt(0)) avatar.toggle()
+  })
 
-var substack = skin(game.THREE, 'substack.png').createPlayerObject()
-substack.position.set(0, 62, -20)
-game.scene.add(substack)
+  // block interaction stuff, uses highlight data
+  var currentMaterial = 1
 
-var currentMaterial = 1
-
-blockSelector.on('select', function(material) {
-  var idx = game.materials.indexOf(material)
-  if (idx === -1) {
-    for (var m = 0; m < game.materials.length; m++) {
-      if (typeof game.materials[m] === 'object' && game.materials[m][0] === material) idx = m
+  game.on('fire', function (target, state) {
+    var position = blockPosPlace
+    if (position) {
+      game.createBlock(position, currentMaterial)
     }
-  }
-  if (idx > -1) currentMaterial = idx + 1
-})
+    else {
+      position = blockPosErase
+      if (position) game.setBlock(position, 0)
+    }
+  })
 
-var explode = debris(game, { power : 1.5, yield: 1 })
-
-game.on('mousedown', function (pos) {
-  if (erase) explode(pos)
-  else game.createBlock(pos, currentMaterial)
-})
-
-var erase = true
-window.addEventListener('keydown', function (ev) {
-  if (ev.keyCode === 'X'.charCodeAt(0)) {
-    erase = !erase
-  }
-})
-
-function ctrlToggle (ev) { erase = !ev.ctrlKey }
-window.addEventListener('keyup', ctrlToggle)
-window.addEventListener('keydown', ctrlToggle)
-
-module.exports = game
+}
