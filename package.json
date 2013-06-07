@@ -8,7 +8,7 @@
   "dependencies": {
     "voxel": "0.3.1",
     "voxel-engine": "~0.18.0",
-    "voxel-highlight": "0.0.8",
+    "voxel-highlight": "0.0.9",
     "voxel-player": "0.1.0",
     "voxel-fly": "~0.1.0",
     "voxel-walk": "git://github.com/flyswatter/voxel-walk.git",
