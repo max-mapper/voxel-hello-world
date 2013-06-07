@@ -1,23 +1,18 @@
 var createGame = require('voxel-engine')
 var highlight = require('voxel-highlight')
 var player = require('voxel-player')
-var texturePath = require('painterly-textures')(__dirname)
 var voxel = require('voxel')
 var extend = require('extend')
+var fly = require('voxel-fly')
+var walk = require('voxel-walk')
 
 module.exports = function(opts, setup) {
   setup = setup || defaultSetup
   var defaults = {
     generate: voxel.generator['Valley'],
     chunkDistance: 2,
-    materials: [
-      ['grass', 'dirt', 'grass_dirt'],
-      'obsidian',
-      'brick',
-      'grass',
-      'plank'
-    ],
-    texturePath: texturePath,
+    materials: ['#fff', '#000'],
+    materialFlatColor: true,
     worldOrigin: [0, 0, 0],
     controls: { discreteFire: true }
   }
@@ -41,10 +36,14 @@ module.exports = function(opts, setup) {
   setup(game, avatar)
   
   return game
-
 }
 
 function defaultSetup(game, avatar) {
+  
+  var makeFly = fly(game)
+  var target = game.controls.target()
+  game.flyer = makeFly(target)
+  
   // highlight blocks when you look at them, hold <Ctrl> for block placement
   var blockPosPlace, blockPosErase
   var hl = game.highlighter = highlight(game, { color: 0xff0000 })
@@ -70,6 +69,14 @@ function defaultSetup(game, avatar) {
       position = blockPosErase
       if (position) game.setBlock(position, 0)
     }
+  })
+
+  game.on('tick', function() {
+    walk.render(target.playerSkin)
+    var vx = Math.abs(target.velocity.x)
+    var vz = Math.abs(target.velocity.z)
+    if (vx > 0.001 || vz > 0.001) walk.stopWalking()
+    else walk.startWalking()
   })
 
 }
